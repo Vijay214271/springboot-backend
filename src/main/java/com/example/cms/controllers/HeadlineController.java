@@ -1,43 +1,44 @@
 package com.example.cms.controllers;
 
-import com.example.cms.services.HeadlineService;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Collections;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.cms.services.HeadlineService;
 
 @Controller
-@RequestMapping("/cms")
+@RequestMapping("/api/headline")
+@RestController
 public class HeadlineController {
-    @Autowired
+
     private HeadlineService service;
 
+    public HeadlineController(HeadlineService service) {
+        this.service = service;
+    }
+
     @GetMapping
-    public String showCMSPage(Model model) {
-        model.addAttribute("headline", service.getLatestHeadline().getHeadline());
-        return "cms";
+    public Map<String,String> getHeadline() {
+        String currentHeadline = service.getLatestHeadline();
+        return Collections.singletonMap("headline", currentHeadline);
     }
 
-    @PostMapping("/update")
-    public String updateHeadline(@RequestParam String headline) {
-        service.updateHeadline(headline);
-        return "redirect:/cms";
-    }
-
-    @RestController
-    @RequestMapping("/api/headline")
-    public static class HeadlineRestController {
-        @Autowired
-        private HeadlineService service;
-
-        @GetMapping
-        public String getHeadline() {
-            return service.getLatestHeadline().getHeadline();
+    @PostMapping
+    public ResponseEntity<?> updateHeadline(@RequestBody Map<String, String> body) {
+        String newHeadline = body.get("headline");
+        if(newHeadline == null || newHeadline.isEmpty()) {
+            return ResponseEntity.badRequest().body("Headline Cannot be empty");
         }
-
-        @PostMapping
-        public void updateHeadline(@RequestBody String headline) {
-            service.updateHeadline(headline);
+        else {
+            service.updateHeadline(newHeadline);
+            return ResponseEntity.ok("Headline updated successfully");
         }
     }
 }

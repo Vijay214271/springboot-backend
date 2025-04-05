@@ -2,6 +2,7 @@ package com.example.cms.services;
 
 import com.example.cms.models.Headline;
 import com.example.cms.repositories.HeadlineRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +11,18 @@ public class HeadlineService {
     @Autowired
     private HeadlineRepository repository;
 
-    public Headline getLatestHeadline() {
-        return repository.findTopByOrderByIdDesc().orElse(new Headline(1L, "Default Headline"));
+    public HeadlineService(HeadlineRepository repository) {
+        this.repository = repository;
+    }
+
+
+    public String getLatestHeadline() {
+        return repository.findTopByOrderByIdDesc().map(Headline::getHeadline).orElse("Hyper boost your Revenue Management, Marketing and Commercial Functions with Business Ready AI");
     }
 
     public void updateHeadline(String newHeadline) {
-        repository.save(new Headline(null, newHeadline));
+        Headline headline = new Headline();
+        headline.setHeadline(newHeadline);
+        repository.save(headline);
     }
 }
