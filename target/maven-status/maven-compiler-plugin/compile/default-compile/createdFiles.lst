@@ -1,0 +1,6 @@
+com\example\cms\config\CorsConfig.class
+com\example\cms\models\Headline.class
+com\example\cms\repositories\HeadlineRepository.class
+com\example\cms\controllers\HeadlineController.class
+com\example\cms\CmsApplication.class
+com\example\cms\services\HeadlineService.class
