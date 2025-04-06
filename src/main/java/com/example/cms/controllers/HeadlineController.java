@@ -18,7 +18,7 @@ import com.example.cms.services.HeadlineService;
 @RestController
 public class HeadlineController {
 
-    private HeadlineService service;
+    private final HeadlineService service;
 
     public HeadlineController(HeadlineService service) {
         this.service = service;
